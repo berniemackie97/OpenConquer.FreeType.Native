@@ -8,11 +8,21 @@ on:
       - 'freetype-native-v*'
     paths:
       - '.github/workflows/native-freetype.yml'
-      - 'native/OpenConquer.FreeType.Native/**'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'OpenConquer.FreeType.Native.csproj'
+      - 'PROVENANCE.md'
+      - 'global.json'
+      - 'upstream/freetype/**'
   pull_request:
     paths:
       - '.github/workflows/native-freetype.yml'
-      - 'native/OpenConquer.FreeType.Native/**'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'OpenConquer.FreeType.Native.csproj'
+      - 'PROVENANCE.md'
+      - 'global.json'
+      - 'upstream/freetype/**'
   workflow_dispatch:
 
 permissions:
@@ -73,10 +83,6 @@ jobs:
             platform: windows
             asset: artifacts/package/runtimes/win-arm64/native/freetype.dll
             expected-machine: '0xAA64'
-
-    defaults:
-      run:
-        working-directory: native/OpenConquer.FreeType.Native
 
     steps:
       - name: Checkout
@@ -194,7 +200,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: freetype-runtime-${{ matrix.preset }}
-          path: native/OpenConquer.FreeType.Native/${{ matrix.asset }}
+          path: ${{ matrix.asset }}
           if-no-files-found: error
           retention-days: 7
           compression-level: 0
@@ -204,10 +210,6 @@ jobs:
     needs: build
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-
-    defaults:
-      run:
-        working-directory: native/OpenConquer.FreeType.Native
 
     steps:
       - name: Checkout
@@ -224,7 +226,7 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           pattern: freetype-runtime-*
-          path: native/OpenConquer.FreeType.Native/artifacts/downloads
+          path: artifacts/downloads
 
       - name: Stage verified runtimes
         shell: bash
@@ -445,7 +447,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: OpenConquer.FreeType.Native
-          path: native/OpenConquer.FreeType.Native/${{ steps.package.outputs.path }}
+          path: ${{ steps.package.outputs.path }}
           if-no-files-found: error
           retention-days: 14
           compression-level: 0
@@ -501,7 +503,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
         with:
-          dotnet-version: '10.0.400'
+          global-json-file: global.json
 
       - name: Download verified NuGet package
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c

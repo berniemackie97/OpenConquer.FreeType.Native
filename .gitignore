@@ -1,0 +1,18 @@
+# Build and package output
+artifacts/
+bin/
+obj/
+
+# Local CMake configuration
+CMakeUserPresets.json
+
+# IDE and editor state
+.idea/
+.vs/
+.vscode/
+*.suo
+*.user
+
+# Operating system metadata
+.DS_Store
+Thumbs.db

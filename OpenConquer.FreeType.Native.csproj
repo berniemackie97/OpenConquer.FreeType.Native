@@ -1,19 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+
     <PackageId>OpenConquer.FreeType.Native</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
     <PackageTitle>OpenConquer FreeType Native</PackageTitle>
     <Authors>OpenConquer</Authors>
     <Description>Reviewed first-party FreeType native runtime assets for OpenConquer.</Description>
     <PackageTags>openconquer freetype native runtime</PackageTags>
-    <PackageProjectUrl>https://github.com/berniemackie97/OpenConquerClient</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/berniemackie97/OpenConquer.FreeType.Native</PackageProjectUrl>
     <PackageReadmeFile>PROVENANCE.md</PackageReadmeFile>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 
     <PackageLicenseFile>FTL.TXT</PackageLicenseFile>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/berniemackie97/OpenConquerClient</RepositoryUrl>
+    <RepositoryUrl>https://github.com/berniemackie97/OpenConquer.FreeType.Native</RepositoryUrl>
 
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
