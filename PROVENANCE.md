@@ -3,8 +3,10 @@
 This document defines the reviewed FreeType source baseline used to produce the native runtime
 assets for `OpenConquer.FreeType.Native`.
 
-The source under `upstream/freetype/` is vendored source. It is intentionally not a Git submodule
-and must not be updated or modified independently of this provenance record.
+The source under `upstream/freetype/` is vendored source. The FreeType tree itself is intentionally
+not a Git submodule and must not be updated or modified independently of this provenance record.
+The exact reviewed upstream tree contains its own `subprojects/dlg` gitlink, which is preserved as
+part of that tree identity.
 
 ## Review Status
 
@@ -45,6 +47,17 @@ Reviewed OpenConquer source tree:
 
 `f4b976c6f83c26866fa3df99d1f51fe696ca1735`
 
+The reviewed tree contains the upstream `subprojects/dlg` gitlink at:
+
+`395ccad2c1e0daae535c4d20bb0a3f2424648e17`
+
+The corresponding upstream repository is:
+
+`https://github.com/nyorain/dlg.git`
+
+The gitlink is retained to preserve the exact reviewed FreeType tree identity. OpenConquer's native
+FreeType build does not initialize that nested repository.
+
 FreeType's license is retained unmodified at:
 
 `upstream/freetype/LICENSE.TXT`
@@ -70,7 +83,7 @@ commit, in this exact order.
 | `a3cb5858f9f3e7fa361e2828312d9145d10ac025` | Windows FNT         | Prevent malformed resource-directory entry counts from wrapping and producing an endless loop. |
 | `50ef5a72980e3afafa7f84d563e63ef65d3800de` | Auto-hinting        | Prevent pointer wrap-around while validating extension lookups on 32-bit platforms.            |
 | `f3ca71c9900fe860849b3163a6e2c1e765b291d9` | CID                 | Limit pathological overlapping CID subroutine dictionaries.                                    |
-| `342e5809b1aa8aed02b9be1df0015fa7e1e0e244` | CFF                 | Reject an invalid CFF name index before copying from a null data pointer.                      |
+| `342e5809b1aa8aed02b9be1df0015fa7e1e0e244` | CFF                 | Reject an invalid CFF name index before copying from a null data pointer.                       |
 
 These are upstream FreeType changes. OpenConquer does not maintain independent patches to the
 FreeType implementation.
