@@ -7,7 +7,9 @@ on:
     tags:
       - 'freetype-native-v*'
     paths:
+      - '.gitattributes'
       - '.github/workflows/native-freetype.yml'
+      - '.gitmodules'
       - 'CMakeLists.txt'
       - 'CMakePresets.json'
       - 'OpenConquer.FreeType.Native.csproj'
@@ -16,7 +18,9 @@ on:
       - 'upstream/freetype/**'
   pull_request:
     paths:
+      - '.gitattributes'
       - '.github/workflows/native-freetype.yml'
+      - '.gitmodules'
       - 'CMakeLists.txt'
       - 'CMakePresets.json'
       - 'OpenConquer.FreeType.Native.csproj'
@@ -33,8 +37,88 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  provenance:
+    name: Source provenance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Verify reviewed FreeType source
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          expected_tree='f4b976c6f83c26866fa3df99d1f51fe696ca1735'
+          expected_dlg='395ccad2c1e0daae535c4d20bb0a3f2424648e17'
+          expected_dlg_path='upstream/freetype/subprojects/dlg'
+          expected_dlg_url='https://github.com/nyorain/dlg.git'
+
+          actual_tree="$(git rev-parse 'HEAD:upstream/freetype')"
+
+          if [[ "$actual_tree" != "$expected_tree" ]]; then
+            echo "Vendored FreeType tree does not match the reviewed source identity." >&2
+            echo "Expected: $expected_tree" >&2
+            echo "Actual:   $actual_tree" >&2
+            exit 1
+          fi
+
+          read -r dlg_mode dlg_type actual_dlg dlg_path < <(
+            git ls-tree "$actual_tree" subprojects/dlg
+          )
+
+          if [[ "$dlg_mode" != '160000' ||
+                "$dlg_type" != 'commit' ||
+                "$actual_dlg" != "$expected_dlg" ||
+                "$dlg_path" != 'subprojects/dlg' ]]
+          then
+            echo "Vendored FreeType dlg gitlink does not match the reviewed source identity." >&2
+            echo "Expected: 160000 commit $expected_dlg subprojects/dlg" >&2
+            echo "Actual:   $dlg_mode $dlg_type $actual_dlg $dlg_path" >&2
+            exit 1
+          fi
+
+          actual_dlg_path="$(
+            git config \
+              -f .gitmodules \
+              --get 'submodule.upstream/freetype/subprojects/dlg.path'
+          )"
+
+          actual_dlg_url="$(
+            git config \
+              -f .gitmodules \
+              --get 'submodule.upstream/freetype/subprojects/dlg.url'
+          )"
+
+          if [[ "$actual_dlg_path" != "$expected_dlg_path" ]]; then
+            echo "FreeType dlg submodule path does not match the reviewed source contract." >&2
+            echo "Expected: $expected_dlg_path" >&2
+            echo "Actual:   $actual_dlg_path" >&2
+            exit 1
+          fi
+
+          if [[ "$actual_dlg_url" != "$expected_dlg_url" ]]; then
+            echo "FreeType dlg submodule URL does not match the reviewed source contract." >&2
+            echo "Expected: $expected_dlg_url" >&2
+            echo "Actual:   $actual_dlg_url" >&2
+            exit 1
+          fi
+
+          if ! grep -Fq "\`$expected_tree\`" PROVENANCE.md; then
+            echo "PROVENANCE.md does not identify the reviewed FreeType source tree." >&2
+            exit 1
+          fi
+
+          printf 'Verified reviewed FreeType source tree %s.\n' "$actual_tree"
+          printf 'Verified dlg gitlink %s.\n' "$actual_dlg"
+
   build:
     name: ${{ matrix.name }}
+    needs: provenance
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 15
 
